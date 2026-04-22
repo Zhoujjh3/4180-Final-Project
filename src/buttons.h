@@ -3,16 +3,18 @@
 
 #include <Arduino.h>
 
-// Pin Definitions - Adjust these to your actual ESP32-C6 GPIOs
+// Pins for ESP32-C6
 #define BTN_SHUFFLE 4
 #define BTN_DEAL    5
-#define BTN_LEFT    6
-#define BTN_RIGHT   7
+#define BTN_TOGGLE  6 // Switches between editing "Players" and "Cards"
+#define BTN_UP      7 // Increments the selected value
 
 void buttonsSetup();
-bool isShufflePressed();
-bool isDealPressed();
-bool isLeftPressed();
-bool isRightPressed();
 
-#endif
+// Flags for the main loop
+extern volatile bool shuffleTriggered;
+extern volatile bool dealTriggered;
+extern volatile bool toggleTriggered;
+extern volatile bool upTriggered;
+
+#endifv
