@@ -1,27 +1,47 @@
 #include "lcd.h"
 
-LiquidCrystal_I2C lcd(0x27, 16, 2); 
+// USE THE FULL CONSTRUCTOR: CS, DC, MOSI (SDA), SCLK (SCL), RST
+Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
 void lcdSetup() {
-    lcd.init();
-    lcd.backlight();
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("System Ready");
+    // Initialize ST7735R chip, black tab
+    tft.initR(INITR_BLACKTAB); 
+    tft.setRotation(1); // Landscape mode
+    tft.fillScreen(ST77XX_BLACK);
+    
+    tft.setCursor(10, 10);
+    tft.setTextColor(ST77XX_WHITE);
+    tft.setTextSize(2);
+    tft.println("Card Dealer");
+    tft.setTextSize(1);
+    tft.println("System Ready...");
 }
 
-void displayStatus(const char* line1, const char* line2) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(line1);
-    lcd.setCursor(0, 1);
-    lcd.print(line2);
+void displayStatus(const char* title, const char* value, uint16_t color) {
+    tft.fillScreen(ST77XX_BLACK);
+    tft.setCursor(10, 20);
+    tft.setTextColor(ST77XX_WHITE);
+    tft.setTextSize(2);
+    tft.println(title);
+    
+    tft.setCursor(10, 60);
+    tft.setTextColor(color);
+    tft.setTextSize(3);
+    tft.println(value);
 }
 
-void displayProgress(int current, int total) {
-    lcd.setCursor(0, 1);
-    lcd.print("Card: ");
-    lcd.print(current);
-    lcd.print("/");
-    lcd.print(total);
+void updateMenu(int players, int cards, bool editingPlayers) {
+    tft.fillScreen(ST77XX_BLACK);
+    tft.setTextSize(2);
+    
+    // Highlight the active selection
+    tft.setCursor(5, 20);
+    tft.setTextColor(editingPlayers ? ST77XX_YELLOW : ST77XX_WHITE);
+    tft.print("Players: ");
+    tft.println(players);
+    
+    tft.setCursor(5, 60);
+    tft.setTextColor(!editingPlayers ? ST77XX_YELLOW : ST77XX_WHITE);
+    tft.print("Cards:   ");
+    tft.println(cards);
 }

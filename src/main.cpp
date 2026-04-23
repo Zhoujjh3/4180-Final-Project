@@ -1,30 +1,51 @@
 #include <Arduino.h>
-#include "motors.h"
+#include "buttons.h"
+#include "lcd.h"
+
+// Keep track of the last action for the display
+String lastAction = "None";
 
 void setup() {
-  Serial.begin(115200);
-  motorSetup();
-  Serial.println("Motor test starting...");
+    Serial.begin(115200);
+    
+    // Initialize peripherals
+    lcdSetup();      // Initializes ST7735 via SPI [cite: 51]
+    buttonsSetup();  // Attaches interrupts to pins 4, 5, 6, 7 [cite: 60, 62]
+    
+    displayStatus("READY", "Press a Button", ST77XX_WHITE);
+    Serial.println("System initialized: Buttons and Display only.");
 }
 
 void loop() {
-  Serial.println("Forward 255");
-  motor1Speed(255);
-  motor2Speed(255);
-  delay(2000);
+    // Check flags set by the Interrupt Service Routines (ISRs)
+    if (shuffleTriggered) {
+        shuffleTriggered = false; // Reset the flag
+        lastAction = "SHUFFLE";
+        displayStatus("ACTION", "SHUFFLING", ST77XX_ORANGE);
+        Serial.println("Button: Shuffle Pressed");
+    }
 
-  Serial.println("Stop");
-  motor1Speed(0);
-  motor2Speed(0);
-  delay(1000);
+    if (dealTriggered) {
+        dealTriggered = false;
+        lastAction = "DEAL";
+        displayStatus("ACTION", "DEALING", ST77XX_GREEN);
+        Serial.println("Button: Deal Pressed");
+    }
 
-  Serial.println("Reverse -255");
-  motor1Speed(-255);
-  motor2Speed(-255);
-  delay(2000);
+    if (toggleTriggered) {
+        toggleTriggered = false;
+        lastAction = "TOGGLE";
+        displayStatus("MENU", "TOGGLED", ST77XX_YELLOW);
+        Serial.println("Button: Toggle Pressed");
+    }
 
-  Serial.println("Stop");
-  motor1Speed(0);
-  motor2Speed(0);
-  delay(1000);
+    if (upTriggered) {
+        upTriggered = false;
+        lastAction = "UP";
+        displayStatus("INPUT", "INCREASED", ST77XX_CYAN);
+        Serial.println("Button: Up Pressed");
+    }
+
+    // Small delay to prevent the loop from spinning too fast
+    delay(10); 
 }
