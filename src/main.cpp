@@ -1,51 +1,67 @@
 #include <Arduino.h>
-#include "buttons.h"
 #include "lcd.h"
+#include "buttons.h"
+#include "stepper.h"
 
-// Keep track of the last action for the display
-String lastAction = "None";
+// State variables for the card dealer logic
+int numPlayers = 2;
+int numCards = 5;
+bool editingPlayers = true; // Toggle state
 
 void setup() {
     Serial.begin(115200);
     
-    // Initialize peripherals
-    lcdSetup();      // Initializes ST7735 via SPI [cite: 51]
-    buttonsSetup();  // Attaches interrupts to pins 4, 5, 6, 7 [cite: 60, 62]
+    // Initialize hardware modules
+    lcdSetup();
+    stepperSetup();
+    buttonsSetup();
+
+    // Initial splash screen and menu
+    displayStatus("WELCOME", "GT Card Dealer", ST77XX_CYAN);
+    delay(1500);
+    updateMenu(numPlayers, numCards, editingPlayers);
     
-    displayStatus("READY", "Press a Button", ST77XX_WHITE);
-    Serial.println("System initialized: Buttons and Display only.");
+    Serial.println("System Initialized and Ready.");
 }
 
 void loop() {
-    // Check flags set by the Interrupt Service Routines (ISRs)
+    // 1. SHUFFLE: Move motor and update screen
     if (shuffleTriggered) {
-        shuffleTriggered = false; // Reset the flag
-        lastAction = "SHUFFLE";
-        displayStatus("ACTION", "SHUFFLING", ST77XX_ORANGE);
-        Serial.println("Button: Shuffle Pressed");
+        displayStatus("ACTION", "Shuffling...", ST77XX_YELLOW);
+        move45Degrees();
+        shuffleTriggered = false;
+        updateMenu(numPlayers, numCards, editingPlayers);
     }
 
+    // 2. DEAL: Move motor and update screen
     if (dealTriggered) {
+        displayStatus("ACTION", "Dealing...", ST77XX_GREEN);
+        move45Degrees();
         dealTriggered = false;
-        lastAction = "DEAL";
-        displayStatus("ACTION", "DEALING", ST77XX_GREEN);
-        Serial.println("Button: Deal Pressed");
+        updateMenu(numPlayers, numCards, editingPlayers);
     }
 
+    // 3. TOGGLE: Switch between editing Players or Cards
     if (toggleTriggered) {
+        editingPlayers = !editingPlayers;
+        displayStatus("MODE", editingPlayers ? "Edit Players" : "Edit Cards", ST77XX_MAGENTA);
+        move45Degrees(); // Move 45 deg for every button as requested
         toggleTriggered = false;
-        lastAction = "TOGGLE";
-        displayStatus("MENU", "TOGGLED", ST77XX_YELLOW);
-        Serial.println("Button: Toggle Pressed");
+        delay(500); // Small delay to show mode change
+        updateMenu(numPlayers, numCards, editingPlayers);
     }
 
+    // 4. UP: Increment the selected value
     if (upTriggered) {
+        if (editingPlayers) {
+            numPlayers = (numPlayers % 8) + 1; // Cycle 1-8
+        } else {
+            numCards = (numCards % 52) + 1;    // Cycle 1-52
+        }
+        
+        displayStatus("UP", "+1 Increment", ST77XX_WHITE);
+        move45Degrees(); 
         upTriggered = false;
-        lastAction = "UP";
-        displayStatus("INPUT", "INCREASED", ST77XX_CYAN);
-        Serial.println("Button: Up Pressed");
+        updateMenu(numPlayers, numCards, editingPlayers);
     }
-
-    // Small delay to prevent the loop from spinning too fast
-    delay(10); 
 }
