@@ -92,11 +92,17 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
 // Setup                                      //
 //============================================//
 void setup() {
+    delay(1000);
     Serial.begin(115200);
-    motorSetup();
-
+    delay(1000);
+    Serial.println("BOOTED");
+    Serial.flush();
+    delay(500);
+    Serial.begin(115200);
+    delay(3000);   // give monitor time to connect
+    Serial.println("=== MOTOR SLAVE BOOTED ===");
     Serial.println("Motor server starting...");
-
+    motorSetup();
     NimBLEDevice::init(DEVICE_NAME);
     NimBLEDevice::setPower(3);
 
