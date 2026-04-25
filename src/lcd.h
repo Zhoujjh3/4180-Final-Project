@@ -15,5 +15,6 @@
 void lcdSetup();
 void displayStatus(const char* title, const char* value, uint16_t color);
 void updateMenu(int players, int cards, bool editingPlayers);
+void updateDealer(int speed, bool leftOn, bool rightOn, bool dealing);
 
 #endif
