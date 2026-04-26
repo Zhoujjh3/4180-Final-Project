@@ -3,19 +3,12 @@
 
 #include <Arduino.h>
 
-// Pins for ESP32-C6
-#define BTN_DEAL        18
-#define BTN_LEFT        19
-#define BTN_RIGHT       22
-#define BTN_SPEED_UP    23
-#define BTN_SPEED_DOWN  1   // pick a free GPIO
+#define BTN_SHUFFLE  18
+#define BTN_DEAL     19
 
 void buttonsSetup();
 
+extern volatile bool shuffleTriggered;
 extern volatile bool dealTriggered;
-extern volatile bool leftTriggered;
-extern volatile bool rightTriggered;
-extern volatile bool speedUpTriggered;
-extern volatile bool speedDownTriggered;
 
 #endif
