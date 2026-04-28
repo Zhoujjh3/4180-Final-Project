@@ -141,18 +141,29 @@ void loop() {
         }
     }
 
-    // ── SHUFFLE: both motors on for 20s ───────────────────
-    if (shuffleTriggered && !isShuffling && !isDealing) {
+    // ── SHUFFLE: toggle on/off, auto-stop after 20s ──────────
+    if (shuffleTriggered && !isDealing) {
         shuffleTriggered = false;
-        isShuffling  = true;
-        shuffleStart = millis();
-        sendCommand(CMD_SHUFFLE);
-        Serial.println("Shuffle: start");
-        displayStatus("SHUFFLE", "Shuffling...", ST77XX_YELLOW);
-        resetDealerDisplay();
+
+        if (!isShuffling) {
+            isShuffling  = true;
+            shuffleStart = millis();
+            sendCommand(CMD_SHUFFLE);
+            Serial.println("Shuffle: start");
+            displayStatus("SHUFFLE", "Shuffling...", ST77XX_YELLOW);
+            resetDealerDisplay();
+        } else {
+            isShuffling = false;
+            sendCommand(CMD_SHUFFLE_STOP);
+            Serial.println("Shuffle: stopped");
+            displayStatus("SHUFFLE", "Stopped", ST77XX_RED);
+            resetDealerDisplay();
+            delay(1000);
+            refreshDisplay();
+        }
     }
 
-    // auto-stop shuffle after 20 seconds
+    // Auto-stop shuffle after 20 seconds
     if (isShuffling && (millis() - shuffleStart >= SHUFFLE_DURATION_MS)) {
         isShuffling = false;
         sendCommand(CMD_SHUFFLE_STOP);

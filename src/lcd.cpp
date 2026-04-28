@@ -24,7 +24,8 @@ void lcdSetup() {
 }
 
 void displayStatus(const char* title, const char* value, uint16_t color) {
-    tft.fillScreen(ST77XX_BLACK);
+    tft.fillRect(0, 10, tft.width(), 25, ST77XX_BLACK);
+    tft.fillRect(0, 50, tft.width(), 25, ST77XX_BLACK);
 
     tft.setCursor(10, 20);
     tft.setTextColor(ST77XX_WHITE);
@@ -33,7 +34,7 @@ void displayStatus(const char* title, const char* value, uint16_t color) {
 
     tft.setCursor(10, 60);
     tft.setTextColor(color);
-    tft.setTextSize(3);
+    tft.setTextSize(2);
     tft.println(value);
 }
 
