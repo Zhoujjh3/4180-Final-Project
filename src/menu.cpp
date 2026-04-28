@@ -48,6 +48,11 @@ void transitionScreen(boolean upTriggered, boolean downTriggered, boolean select
                 currScreen = SCREEN_MENU;   
             }
             break;
+        case SCREEN_MANUAL_SHUFFLING:          // ← new
+            if (selectTriggered) {
+                currScreen = SCREEN_MENU;
+            }
+            break;
     }
     drawScreen(currScreen);
 }
@@ -85,9 +90,18 @@ void transitionMenu(boolean upTriggered, boolean downTriggered, boolean selectTr
             if (upTriggered) {
                 currMenu = MENU_DEAL;
             } else if (downTriggered) {
-                currMenu = MENU_CARDS;
+                currMenu = MENU_MANUAL_SHUFFLE; 
             } else if (selectTriggered) {
                 currScreen = SCREEN_SHUFFLING;
+            }
+            break;
+        case MENU_MANUAL_SHUFFLE:              
+            if (upTriggered) {
+                currMenu = MENU_SHUFFLE;
+            } else if (downTriggered) {
+                currMenu = MENU_CARDS;        
+            } else if (selectTriggered) {
+                currScreen = SCREEN_MANUAL_SHUFFLING;
             }
             break;
     }
