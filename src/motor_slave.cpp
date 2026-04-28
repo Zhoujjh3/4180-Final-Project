@@ -4,6 +4,13 @@
 #include "ble_commands.h"
 #include "esp_pm.h"
 
+#define RAMP_DURATION_MS  300   // time to ramp from 0 to full speed
+#define DEAL_FULL_SPEED   200
+
+// ── Deal motor ramp state ─────────────────────────────────────
+static bool          isRamping = false;
+static unsigned long rampStart = 0;
+
 //============================================//
 // BLE Server Callbacks                       //
 //============================================//
@@ -13,10 +20,10 @@ class ServerCallbacks : public NimBLEServerCallbacks {
     }
     void onDisconnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo, int reason) override {
         Serial.printf("Controller disconnected (reason %d) — re-advertising\n", reason);
-        // Safety stop all motors on disconnect
         motor1Speed(0);
         motor2Speed(0);
         outputMotorSpeed(0);
+        isRamping = false;
         NimBLEDevice::getAdvertising()->start();
     }
 };
@@ -36,8 +43,8 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
 
         switch (cmd) {
             case CMD_SHUFFLE:
-                motor1Speed(255);       // shuffle motor left
-                motor2Speed(255);       // shuffle motor right
+                motor1Speed(255);
+                motor2Speed(255);
                 Serial.println("Shuffle: start");
                 break;
 
@@ -48,12 +55,15 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
                 break;
 
             case CMD_DEAL:
-                outputMotorSpeed(200);  // deal motor
-                Serial.println("Deal: On");
+                // Start ramp — loop() drives the actual speed
+                isRamping = true;
+                rampStart = millis();
+                Serial.println("Deal: ramping up");
                 break;
 
             case CMD_DEAL_STOP:
                 outputMotorSpeed(0);
+                isRamping = false;
                 Serial.println("Deal: Off");
                 break;
 
@@ -64,7 +74,9 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
     }
 };
 
-
+//============================================//
+// Setup                                      //
+//============================================//
 void setup() {
     Serial.begin(115200);
     delay(3000);
@@ -74,7 +86,6 @@ void setup() {
     NimBLEDevice::init(DEVICE_NAME);
     NimBLEDevice::setPower(3);
 
-    // automatic light sleep between BLE events
     esp_pm_config_t pm_config = {
         .max_freq_mhz = 160,
         .min_freq_mhz = 10,
@@ -100,6 +111,19 @@ void setup() {
     Serial.println("Advertising — waiting for controller...");
 }
 
+//============================================//
+// Loop                                       //
+//============================================//
 void loop() {
+    if (isRamping) {
+        unsigned long elapsed = millis() - rampStart;
+        if (elapsed >= RAMP_DURATION_MS) {
+            outputMotorSpeed(DEAL_FULL_SPEED);
+            isRamping = false;
+        } else {
+            int speed = (int)(DEAL_FULL_SPEED * elapsed / RAMP_DURATION_MS);
+            outputMotorSpeed(speed);
+        }
+    }
     delay(10);
 }
