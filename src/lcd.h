@@ -5,6 +5,8 @@
 #include <Adafruit_ST7735.h>
 #include <SPI.h>
 
+#include "menu.h"
+
 #define TFT_CS    10
 #define TFT_RST   -1
 #define TFT_DC    2
@@ -17,5 +19,8 @@ void lcdSetup();
 void displayStatus(const char* title, const char* value, uint16_t color);
 void resetDealerDisplay();
 void updateDealer(bool dealing, bool shuffling);
+
+void drawArrow(menuStates m);
+void drawScreen(screenStates s);
 
 #endif

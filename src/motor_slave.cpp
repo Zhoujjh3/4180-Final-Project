@@ -2,6 +2,7 @@
 #include <NimBLEDevice.h>
 #include "motors.h"
 #include "ble_commands.h"
+#include "esp_pm.h"
 
 //============================================//
 // BLE Server Callbacks                       //
@@ -47,7 +48,7 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
                 break;
 
             case CMD_DEAL:
-                outputMotorSpeed(255);  // deal motor
+                outputMotorSpeed(180);  // deal motor
                 Serial.println("Deal: On");
                 break;
 
@@ -63,9 +64,7 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
     }
 };
 
-//============================================//
-// Setup                                      //
-//============================================//
+
 void setup() {
     Serial.begin(115200);
     delay(3000);
@@ -74,6 +73,14 @@ void setup() {
 
     NimBLEDevice::init(DEVICE_NAME);
     NimBLEDevice::setPower(3);
+
+    // automatic light sleep between BLE events
+    esp_pm_config_t pm_config = {
+        .max_freq_mhz = 160,
+        .min_freq_mhz = 10,
+        .light_sleep_enable = true
+    };
+    esp_pm_configure(&pm_config);
 
     NimBLEServer* pServer = NimBLEDevice::createServer();
     pServer->setCallbacks(new ServerCallbacks());
@@ -93,9 +100,6 @@ void setup() {
     Serial.println("Advertising — waiting for controller...");
 }
 
-//============================================//
-// Loop                                       //
-//============================================//
 void loop() {
     delay(10);
 }
