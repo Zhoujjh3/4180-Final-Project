@@ -6,19 +6,16 @@
 
 #define SHUFFLE_DURATION_MS 24000  // 20 seconds
 
-// ── State ─────────────────────────────────────────────────
 bool isShuffling = false;
 bool isDealing   = false;
 unsigned long shuffleStart = 0;
 
-// ── BLE ───────────────────────────────────────────────────
 static NimBLERemoteCharacteristic* pChr       = nullptr;
 static const NimBLEAdvertisedDevice* advDevice = nullptr;
 static bool     doConnect   = false;
 static bool     isConnected = false;
 static uint32_t scanTimeMs  = 5000;
 
-// ── Send a 1-byte command ─────────────────────────────────
 void sendCommand(uint8_t cmd) {
     if (!isConnected || pChr == nullptr) {
         Serial.println("BLE not connected — command dropped");
@@ -155,7 +152,7 @@ void loop() {
         resetDealerDisplay();
     }
 
-    // Auto-stop shuffle after 20 seconds
+    // auto-stop shuffle after 20 seconds
     if (isShuffling && (millis() - shuffleStart >= SHUFFLE_DURATION_MS)) {
         isShuffling = false;
         sendCommand(CMD_SHUFFLE_STOP);
