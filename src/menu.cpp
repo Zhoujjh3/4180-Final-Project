@@ -1,12 +1,17 @@
+
+#include <Preferences.h>
+
 #include "menu.h"
 #include "lcd.h"
 #include "buttons.h"
 
-unsigned int numPlayers = 0;
+unsigned int numPlayers = 1;
 unsigned int numCards = 1;
 
 screenStates currScreen = SCREEN_MENU;
 menuStates currMenu = MENU_CARDS;
+
+Preferences prefs;
 
 void transitionScreen(boolean upTriggered, boolean downTriggered, boolean selectTriggered) {
     switch(currScreen) {
@@ -19,6 +24,7 @@ void transitionScreen(boolean upTriggered, boolean downTriggered, boolean select
             } else if (downTriggered && numCards > 1) {
                 numCards--;
             } else if (selectTriggered) {
+                saveToNV();
                 currScreen = SCREEN_MENU;
             }
             break;
@@ -28,6 +34,7 @@ void transitionScreen(boolean upTriggered, boolean downTriggered, boolean select
             } else if (downTriggered && numPlayers > 0) {
                 numPlayers--;
             } else if (selectTriggered) {
+                saveToNV();
                 currScreen = SCREEN_MENU;
             }
             break;
@@ -88,5 +95,18 @@ void transitionMenu(boolean upTriggered, boolean downTriggered, boolean selectTr
 
 }
 
+void saveToNV() {
+  prefs.begin("dealer", false);
+  prefs.putUInt("numCards", numCards);
+  prefs.putUInt("numPlayers", numPlayers);
+  prefs.end();
+}
+
+void loadFromNV() {                                           
+      prefs.begin("dealer", true);
+      numCards   = prefs.getUInt("numCards", 1);               
+      numPlayers = prefs.getUInt("numPlayers", 2);             
+      prefs.end();                                           
+  }      
 
 

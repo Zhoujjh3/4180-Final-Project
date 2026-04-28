@@ -121,6 +121,9 @@ void setup() {
     pScan->start(scanTimeMs);
 
     Serial.println("Scanning for motor server...");
+
+    // load player count + deal amount from nonvolatile memory
+    loadFromNV();
 }
 
 //============================================//

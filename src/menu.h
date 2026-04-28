@@ -26,5 +26,7 @@ extern menuStates currMenu;
 
 void transitionScreen(boolean upTriggered, boolean downTriggered, boolean selectTriggered);
 void transitionMenu(boolean upTriggered, boolean downTriggered, boolean selectTriggered);
+void saveToNV();
+void loadFromNV();
 
 #endif
