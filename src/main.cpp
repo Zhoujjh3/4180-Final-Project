@@ -221,11 +221,11 @@ void loop() {
             }
             
             // Entered manual shuffling — motors on, no timer
-            if (currScreen == SCREEN_MANUAL_SHUFFLING) {        // ← new
+            if (currScreen == SCREEN_MANUAL_DEALING) {        // ← new
                 sendCommand(CMD_SHUFFLE);
 
             // Left manual shuffling (select press) — just stop motors
-            } else if (prevScreen == SCREEN_MANUAL_SHUFFLING) { // ← new
+            } else if (prevScreen == SCREEN_MANUAL_DEALING) { // ← new
                 sendCommand(CMD_SHUFFLE_STOP);
             }
 

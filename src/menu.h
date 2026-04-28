@@ -12,7 +12,7 @@ enum screenStates {
     SCREEN_SET_CARDS,
     SCREEN_DEALING,
     SCREEN_SHUFFLING,
-    SCREEN_MANUAL_SHUFFLING
+    SCREEN_MANUAL_DEALING
 };
 
 enum menuStates {
@@ -20,7 +20,7 @@ enum menuStates {
     MENU_DEAL,
     MENU_PLAYERS,
     MENU_CARDS,
-    MENU_MANUAL_SHUFFLE
+    MENU_MANUAL_DEAL         
 };
 
 extern screenStates currScreen;

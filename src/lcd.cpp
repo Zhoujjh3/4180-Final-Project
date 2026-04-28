@@ -7,7 +7,7 @@ Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RS
 // constants
 #define MENU_TEXT_X   22
 // y positions for each menu item
-// MENU_SHUFFLE=0, MENU_DEAL=1, MENU_PLAYERS=2, MENU_CARDS=3, MENU_MANUAL_SHUFFLE=4
+// MENU_SHUFFLE=0, MENU_DEAL=1, MENU_PLAYERS=2, MENU_CARDS=3, SCREEN_MANUAL_DEALING=4
 static const int MENU_Y[] = { 35, 53, 71, 89, 107 };  // ← added 107 for MENU_MANUAL_SHUFFLE
 
 // internal states
@@ -90,7 +90,7 @@ void drawScreen(screenStates s) {
                 displayStatus("SHUFFLE", "Shuffling...", ST77XX_YELLOW);
             }
             break;
-        case SCREEN_MANUAL_SHUFFLING:         
+        case SCREEN_MANUAL_DEALING:         
             if (fresh) {
                 tft.fillScreen(ST77XX_BLACK);
                 displayStatus("MANUAL", "Shuffle Now", ST77XX_MAGENTA);
@@ -116,8 +116,7 @@ static void drawMenu() {
     tft.setCursor(MENU_TEXT_X, MENU_Y[MENU_DEAL]);           tft.println("DEAL");
     tft.setCursor(MENU_TEXT_X, MENU_Y[MENU_PLAYERS]);        tft.println("Set Player CNT");
     tft.setCursor(MENU_TEXT_X, MENU_Y[MENU_CARDS]);          tft.println("Set Deal AMT");
-    tft.setCursor(MENU_TEXT_X, MENU_Y[MENU_MANUAL_SHUFFLE]); tft.println("MANUAL SHUFFLE");  
-
+    tft.setCursor(MENU_TEXT_X, MENU_Y[MENU_MANUAL_DEAL]); tft.println("MANUAL DEAL");  
     // draw arrow at current position
     drawArrow(currMenu);
 }
