@@ -3,17 +3,16 @@
 #include "lcd.h"
 #include "buttons.h"
 #include "ble_commands.h"
+#include "menu.h"
 
 #define SHUFFLE_DURATION_MS 24000  // 20 seconds
 
-bool isShuffling = false;
-bool isDealing   = false;
 unsigned long shuffleStart = 0;
 
-static NimBLERemoteCharacteristic* pChr       = nullptr;
+static NimBLERemoteCharacteristic* pChr = nullptr;
 static const NimBLEAdvertisedDevice* advDevice = nullptr;
-static bool     doConnect   = false;
-static bool     isConnected = false;
+static bool doConnect   = false;
+static bool isConnected = false;
 static uint32_t scanTimeMs  = 5000;
 
 void sendCommand(uint8_t cmd) {
@@ -24,10 +23,6 @@ void sendCommand(uint8_t cmd) {
     uint8_t packet[1] = { cmd };
     pChr->writeValue(packet, 1, false);
     Serial.printf("BLE TX: cmd=0x%02X\n", cmd);
-}
-
-void refreshDisplay() {
-    updateDealer(isDealing, isShuffling);
 }
 
 //============================================//
@@ -56,19 +51,19 @@ class ClientCallbacks : public NimBLEClientCallbacks {
         isConnected = true;
         Serial.println("BLE Connected to motor server");
         displayStatus("BLE", "Connected", ST77XX_GREEN);
-        resetDealerDisplay();
         delay(800);
-        refreshDisplay();
+        currScreen = SCREEN_MENU;                                    
+        drawScreen(SCREEN_MENU);   
     }
     void onDisconnect(NimBLEClient* pClient, int reason) override {
         isConnected = false;
         pChr = nullptr;
         Serial.printf("BLE Disconnected (reason %d) — rescanning\n", reason);
         displayStatus("BLE", "Lost...", ST77XX_RED);
-        resetDealerDisplay();
         delay(800);
-        refreshDisplay();
         NimBLEDevice::getScan()->start(scanTimeMs, false, true);
+        currScreen = SCREEN_MENU;                                    
+        drawScreen(SCREEN_MENU);   
     }
 } clientCallbacks;
 
@@ -141,57 +136,35 @@ void loop() {
         }
     }
 
-    // ── SHUFFLE: toggle on/off, auto-stop after 20s ──────────
-    if (shuffleTriggered && !isDealing) {
-        shuffleTriggered = false;
+    if (upTriggered || downTriggered || selectTriggered) {
+      screenStates prevScreen = currScreen;
+      transitionScreen(upTriggered, downTriggered, selectTriggered);
 
-        if (!isShuffling) {
-            isShuffling  = true;
-            shuffleStart = millis();
+      upTriggered = false;
+      downTriggered = false;
+      selectTriggered = false;
+
+      //BLE commands
+      if (currScreen != prevScreen) {
+        if (currScreen == SCREEN_SHUFFLING) {
+            shuffleStart = millis();                     
             sendCommand(CMD_SHUFFLE);
-            Serial.println("Shuffle: start");
-            displayStatus("SHUFFLE", "Shuffling...", ST77XX_YELLOW);
-            resetDealerDisplay();
-        } else {
-            isShuffling = false;
-            sendCommand(CMD_SHUFFLE_STOP);
-            Serial.println("Shuffle: stopped");
-            displayStatus("SHUFFLE", "Stopped", ST77XX_RED);
-            resetDealerDisplay();
-            delay(1000);
-            refreshDisplay();
+        } else if (prevScreen == SCREEN_SHUFFLING) {  
+            sendCommand(CMD_SHUFFLE_STOP);             
         }
-    }
-
-    // Auto-stop shuffle after 20 seconds
-    if (isShuffling && (millis() - shuffleStart >= SHUFFLE_DURATION_MS)) {
-        isShuffling = false;
-        sendCommand(CMD_SHUFFLE_STOP);
-        Serial.println("Shuffle: done");
-        displayStatus("SHUFFLE", "Done!", ST77XX_GREEN);
-        resetDealerDisplay();
-        delay(1500);
-        refreshDisplay();
-    }
-
-    // ── DEAL: toggle deal motor on/off ────────────────────
-    if (dealTriggered && !isShuffling) {
-        dealTriggered = false;
-
-        if (!isDealing) {
-            isDealing = true;
+                                                          
+        if (currScreen == SCREEN_DEALING) {              
             sendCommand(CMD_DEAL);
-            Serial.println("Deal: On");
-            displayStatus("DEAL", "Dealing...", ST77XX_GREEN);
-            resetDealerDisplay();
-        } else {
-            isDealing = false;
+        } else if (prevScreen == SCREEN_DEALING) {  
             sendCommand(CMD_DEAL_STOP);
-            Serial.println("Deal: Off");
-            displayStatus("DEAL", "Stopped", ST77XX_RED);
-            resetDealerDisplay();
-            delay(1000);
-            refreshDisplay();
-        }
+        }                                                
+      }   
     }
+
+    // ── Auto-stop shuffle after 20s ───────────────────────
+        if (currScreen == SCREEN_SHUFFLING && (millis() - shuffleStart >= SHUFFLE_DURATION_MS)) {         
+          sendCommand(CMD_SHUFFLE_STOP);                       
+          currScreen = SCREEN_MENU;
+          drawScreen(SCREEN_MENU);                           
+      }
 }
