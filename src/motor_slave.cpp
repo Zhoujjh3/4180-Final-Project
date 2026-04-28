@@ -48,7 +48,7 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
                 break;
 
             case CMD_DEAL:
-                outputMotorSpeed(255);  // deal motor
+                outputMotorSpeed(180);  // deal motor
                 Serial.println("Deal: On");
                 break;
 
