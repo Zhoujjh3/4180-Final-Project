@@ -93,8 +93,7 @@ void drawScreen(screenStates s) {
         case SCREEN_MANUAL_DEALING:         
             if (fresh) {
                 tft.fillScreen(ST77XX_BLACK);
-                displayStatus("MANUAL", "Shuffle Now", ST77XX_MAGENTA);
-            }
+                displayStatus("MANUAL DEAL", "Running...", ST77XX_CYAN);}
             break;
     }
 }

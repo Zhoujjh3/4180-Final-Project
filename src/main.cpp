@@ -222,11 +222,11 @@ void loop() {
             
             // Entered manual shuffling — motors on, no timer
             if (currScreen == SCREEN_MANUAL_DEALING) {        // ← new
-                sendCommand(CMD_SHUFFLE);
+                sendCommand(CMD_DEAL);
 
             // Left manual shuffling (select press) — just stop motors
             } else if (prevScreen == SCREEN_MANUAL_DEALING) { // ← new
-                sendCommand(CMD_SHUFFLE_STOP);
+                sendCommand(CMD_DEAL_STOP);
             }
 
             // Entered dealing — start sequence
