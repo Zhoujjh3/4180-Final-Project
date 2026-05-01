@@ -4,7 +4,13 @@
 
 <img width="1696" height="400" alt="project_photos_horizontal" src="https://github.com/user-attachments/assets/f4430ad4-8368-4f0c-8b97-17622b88a011" />
 
+## Video Demo
+
+<div align="center">
+
 [![Demo Video](https://img.youtube.com/vi/HnhNEBLaP4c/hqdefault.jpg)](https://www.youtube.com/watch?v=HnhNEBLaP4c)
+
+</div>
 
 ---
 
