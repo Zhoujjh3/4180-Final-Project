@@ -8,7 +8,7 @@
 
 ## Project Overview
 
-GT Dealer is a fully automated card shuffling and dealing machine controlled wirelessly via Bluetooth Low Energy (BLE). The system uses two ESP32-C6 microcontrollers — one acting as a BLE client (the UI/controller node) and one as a BLE server (the motor driver node) — to physically shuffle and deal a standard 52-card deck to up to 8 players. Users configure game settings through a 3-button menu on a TFT LCD display, then trigger automated shuffle and deal sequences wirelessly.
+GT Dealer is a fully automated card shuffling and dealing machine controlled wirelessly via Bluetooth Low Energy (BLE). The system uses two ESP32-C6 microcontrollers — one acting as a BLE client (the UI/controller node) and one as a BLE server (the motor driver node) — to physically shuffle and deal a standard 52-card deck to up to 8 players. Users configure game settings through a 3-button menu on a LCD display, then trigger automated shuffle and deal sequences wirelessly.
 
 ---
 
@@ -27,7 +27,7 @@ The shuffle module uses two counter-rotating DC motors with rubber O-ring roller
 | ESP32-C6 DevKitC-1 | 2 | Controller MCU (UI) + Motor MCU (BLE server) |
 | TB6612FNG H-Bridge Motor Driver | 2 | Drive 3 DC motors with bidirectional PWM control |
 | DC Brushed Motors (N20) | 3 | 2× shuffle rollers, 1× deal ejector |
-| ST7735 1.8" TFT LCD (128×160) | 1 | SPI display for menu UI |
+| ST7735 1.8" LCD (128×160) | 1 | SPI display for menu UI |
 | Tactile Push Buttons | 3 | Up / Down / Select navigation |
 | AA Battery Pack (4×AA, 6V) | 1 | Motor power supply |
 | USB (5V) | 1 | Controller ESP32 power |
