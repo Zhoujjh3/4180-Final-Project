@@ -62,7 +62,7 @@ Key firmware features:
 
 ## Comparison to Real-World Embedded Systems
 
-GT Dealer shares architectural patterns with commercial embedded products. The dual-MCU BLE master-slave topology mirrors designs used in wireless consumer electronics (e.g., BLE remote + actuator node in smart home devices) where UI logic is intentionally isolated from high-current hardware to ensure stability. The non-blocking FSM deal sequencer is analogous to motor sequencing firmware in industrial dispensing machines. The use of NVS for persistent configuration mirrors techniques in IoT field devices that must retain calibration across power cycles.
+GT Dealer shares similar architectural patterns with commercial embedded products. The use of dual-MCU BLE master-slave mirrors designs used in wireless consumer electronics (e.g., BLE remote + actuator node in smart home devices). The non-blocking FSM deal sequencer is analogous to motor sequencing firmware in industrial dispensing machines. The use of non-volatile storage for persistent configuration mirrors techniques in IoT field devices that must retain calibration across power cycles.
 
 Unlike commercial card dealers (e.g., casino shufflers), GT Dealer does not use optical card sensing or closed-loop feedback — card dispensing is purely time-based, which limits single-card ejection precision.
 
