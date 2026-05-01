@@ -8,13 +8,13 @@
 
 ## Project Overview
 
-GT Dealer is a fully automated card shuffling and dealing machine controlled wirelessly via Bluetooth Low Energy (BLE). The system uses two ESP32-C6 microcontrollers — one acting as a BLE GATT client (the UI/controller node) and one as a BLE GATT server (the motor driver node) — to physically shuffle and deal a standard 52-card deck to up to 8 players. Users configure game settings through a 3-button menu on a TFT LCD display, then trigger automated shuffle and deal sequences wirelessly.
+GT Dealer is a fully automated card shuffling and dealing machine controlled wirelessly via Bluetooth Low Energy (BLE). The system uses two ESP32-C6 microcontrollers — one acting as a BLE client (the UI/controller node) and one as a BLE server (the motor driver node) — to physically shuffle and deal a standard 52-card deck to up to 8 players. Users configure game settings through a 3-button menu on a TFT LCD display, then trigger automated shuffle and deal sequences wirelessly.
 
 ---
 
 ## Mechanical Design
 
-The physical housing was fully custom-designed and 3D printed using Fusion 360. The enclosure was designed iteratively to achieve the exact internal dimensions needed to hold a standard playing card deck snugly while accommodating the three DC motors and their rubber O-ring rollers. The modular design consists of two main assemblies: a **shuffle module** (the outer clamshell) and a **deal module** (the lower ejection stage).
+The physical housing was fully custom-designed and 3D printed at the Hive. The enclosure was designed iteratively to achieve the exact internal dimensions needed to hold a standard playing card deck snugly while accommodating the three DC motors and their rubber O-ring rollers. The modular design consists of two main assemblies: a **shuffle module** (the outer clamshell) and a **deal module** (the lower ejection stage).
 
 The shuffle module uses two counter-rotating DC motors with rubber O-ring rollers pressing against opposite faces of the deck, rapidly alternating card positions to randomize the deck. The deal module uses a third DC motor with a friction roller contacting the bottom card of the deck, ejecting one card at a time through a slot at the base. The enclosure tolerances were tuned through multiple print iterations to ensure consistent card contact pressure without jamming.
 
@@ -34,9 +34,9 @@ The shuffle module uses two counter-rotating DC motors with rubber O-ring roller
 
 ### Component Roles
 
-**ESP32-C6 (Controller Node):** Hosts the user interface. Reads 3 GPIO buttons with software debouncing, drives the ST7735 LCD over SPI using the Adafruit GFX library, manages a screen/menu state machine, and transmits 1-byte BLE command packets to the motor node via NimBLE GATT.
+**ESP32-C6 (Controller Node):** Hosts the user interface. Reads 3 GPIO buttons with software debouncing, drives the ST7735 LCD over SPI using the Adafruit GFX library, manages a screen/menu state machine, and transmits 1-byte BLE command packets to the motor node via NimBLE.
 
-**ESP32-C6 (Motor Node):** Acts as a BLE GATT peripheral/server. Receives command bytes from the controller and drives the three DC motors accordingly via PWM on the TB6612 H-bridge drivers. Runs FreeRTOS with tickless idle and dynamic frequency scaling (160→10 MHz) to reduce power draw between BLE events. On BLE disconnect, immediately cuts all motor PWM to prevent runaway hardware state.
+**ESP32-C6 (Motor Node):** Acts as a BLE peripheral/server. Receives command bytes from the controller and drives the three DC motors accordingly via PWM on the TB6612 H-bridge drivers. Runs FreeRTOS with tickless idle and dynamic frequency scaling (160→10 MHz) to reduce power draw between BLE events. On BLE disconnect, immediately cuts all motor PWM to prevent runaway hardware state.
 
 **TB6612FNG H-Bridges (×2):** Provide bidirectional PWM motor control with built-in current limiting and thermal protection. One driver handles both shuffle motors; the other handles the deal motor. 8-bit PWM resolution allows fine-tuned speed control per operation.
 
