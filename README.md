@@ -1,8 +1,6 @@
 # GT Dealer — Automated Card Shuffler & Dealer
 
 **ECE 4180 Final Project | Georgia Institute of Technology**
-<img width="1440" height="1920" alt="image" src="https://github.com/user-attachments/assets/c8426ec3-7bfe-48be-b7b4-8cbfc400149a" />
-
 ---
 
 ## Project Overview
