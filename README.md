@@ -40,7 +40,7 @@ The shuffle module uses two counter-rotating DC motors with rubber O-ring roller
 
 **TB6612FNG H-Bridges (×2):** Provide bidirectional PWM motor control with built-in current limiting and thermal protection. One driver handles both shuffle motors; the other handles the deal motor. 8-bit PWM resolution allows fine-tuned speed control per operation.
 
-**ST7735 TFT LCD:** Connected via SPI, rendering a navigable menu with options for Shuffle, Deal, Manual Deal, Set Player Count, and Set Card Amount. Display state is tightly coupled to the firmware's screen state machine.
+**ST7735 LCD:** Connected via SPI, rendering a navigable menu with options for Shuffle, Deal, Manual Deal, Set Player Count, and Set Card Amount. Display state is tightly coupled to the firmware's screen state machine.
 
 **Buttons (×3):** Up, Down, and Select. Debounced in software. Drive the menu state machine to navigate options and trigger operations.
 
