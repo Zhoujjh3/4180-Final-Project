@@ -85,3 +85,12 @@ Unlike commercial card dealers (e.g., casino shufflers), GT Dealer does not use 
 - **Optical card sensor** — add an IR break-beam sensor at the ejection slot for closed-loop card counting, replacing time-based dispensing
 - **Rechargeable LiPo battery + charging circuit** — replace AA pack for a cleaner, self-contained form factor
 - **PCB design** — replace breadboard prototypes with custom PCBs to reduce wiring complexity and improve reliability
+
+## Schematic Diagrams
+- **Motor ESP32 Schematic
+<img width="1948" height="1430" alt="image" src="https://github.com/user-attachments/assets/8ef24618-2843-490d-9224-d85dfaf9e088" />
+- **Controller ESP32 Schematic
+<img width="1936" height="1574" alt="image" src="https://github.com/user-attachments/assets/0553ab45-5a06-4fd5-a274-fe9c027bc078" />
+
+
+
