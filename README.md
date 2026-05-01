@@ -3,6 +3,7 @@
 **ECE 4180 Final Project | Georgia Institute of Technology**
 
 <img width="1696" height="400" alt="project_photos_horizontal" src="https://github.com/user-attachments/assets/f4430ad4-8368-4f0c-8b97-17622b88a011" />
+
 [![Demo Video](https://img.youtube.com/vi/HnhNEBLaP4c/hqdefault.jpg)](https://www.youtube.com/watch?v=HnhNEBLaP4c)
 
 ---
