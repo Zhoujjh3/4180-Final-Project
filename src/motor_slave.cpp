@@ -4,26 +4,31 @@
 #include "ble_commands.h"
 #include "esp_pm.h"
 
-//============================================//
-// BLE Server Callbacks                       //
-//============================================//
+#define RAMP_DURATION_MS  300   // time to ramp from 0 to full speed
+#define DEAL_FULL_SPEED   200
+#define LED_PIN           5
+
+// ── Deal motor ramp state ─────────────────────────────────────
+static bool          isRamping = false;
+static unsigned long rampStart = 0;
+
+// BLE server callbacks
 class ServerCallbacks : public NimBLEServerCallbacks {
     void onConnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo) override {
         Serial.println("Controller connected");
     }
     void onDisconnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo, int reason) override {
         Serial.printf("Controller disconnected (reason %d) — re-advertising\n", reason);
-        // Safety stop all motors on disconnect
         motor1Speed(0);
         motor2Speed(0);
         outputMotorSpeed(0);
+        isRamping = false;
+        digitalWrite(LED_PIN, LOW);
         NimBLEDevice::getAdvertising()->start();
     }
 };
 
-//============================================//
-// Characteristic Write Callback              //
-//============================================//
+// characteristic write callback
 class CharCallbacks : public NimBLECharacteristicCallbacks {
     void onWrite(NimBLECharacteristic* pChr, NimBLEConnInfo& connInfo) override {
         std::string val = pChr->getValue();
@@ -36,8 +41,8 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
 
         switch (cmd) {
             case CMD_SHUFFLE:
-                motor1Speed(255);       // shuffle motor left
-                motor2Speed(255);       // shuffle motor right
+                motor1Speed(255);
+                motor2Speed(255);
                 Serial.println("Shuffle: start");
                 break;
 
@@ -48,12 +53,16 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
                 break;
 
             case CMD_DEAL:
-                outputMotorSpeed(180);  // deal motor
-                Serial.println("Deal: On");
+                isRamping = true;
+                rampStart = millis();
+                digitalWrite(LED_PIN, HIGH);
+                Serial.println("Deal: ramping up");
                 break;
 
             case CMD_DEAL_STOP:
                 outputMotorSpeed(0);
+                isRamping = false;
+                digitalWrite(LED_PIN, LOW);
                 Serial.println("Deal: Off");
                 break;
 
@@ -64,17 +73,17 @@ class CharCallbacks : public NimBLECharacteristicCallbacks {
     }
 };
 
-
 void setup() {
     Serial.begin(115200);
     delay(3000);
 
     motorSetup();
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW);
 
     NimBLEDevice::init(DEVICE_NAME);
     NimBLEDevice::setPower(3);
 
-    // automatic light sleep between BLE events
     esp_pm_config_t pm_config = {
         .max_freq_mhz = 160,
         .min_freq_mhz = 10,
@@ -101,5 +110,15 @@ void setup() {
 }
 
 void loop() {
+    if (isRamping) {
+        unsigned long elapsed = millis() - rampStart;
+        if (elapsed >= RAMP_DURATION_MS) {
+            outputMotorSpeed(DEAL_FULL_SPEED);
+            isRamping = false;
+        } else {
+            int speed = (int)(DEAL_FULL_SPEED * elapsed / RAMP_DURATION_MS);
+            outputMotorSpeed(speed);
+        }
+    }
     delay(10);
 }

@@ -3,8 +3,7 @@
 **ECE 4180 Final Project | Georgia Institute of Technology**
 
 <img width="1696" height="400" alt="project_photos_horizontal" src="https://github.com/user-attachments/assets/f4430ad4-8368-4f0c-8b97-17622b88a011" />
-[![Demo Video](https://img.youtube.com/vi/HnhNEBLaP4c/0.
-  jpg)](https://www.youtube.com/watch?v=HnhNEBLaP4c)   
+[![Demo Video](https://img.youtube.com/vi/HnhNEBLaP4c/hqdefault.jpg)](https://www.youtube.com/watch?v=HnhNEBLaP4c)
 
 ---
 
@@ -72,8 +71,8 @@ Unlike commercial card dealers, GT Dealer does not use card sensing or closed-lo
 
 ## Problems Encountered
 
-**Card compression inconsistency:** The most significant hardware challenge was ensuring that only one card was ejected per deal cycle. This was difficult for two reasons:
-1. Since we were not using rubber O-rings but instead a variety of differently sized rubber bands wrapped around the roller, the roller did not have a uniform circumference. Thus, even though we fine tuneded the card gap in CAD to only let one card out at a time, this would sometimes result in jamming. To solve this, we widened the gap, but this would sometimes allow for multiple cards to slip out.
+**Card dealing inconsistency:** The most significant hardware challenge was ensuring that only one card was ejected per deal cycle. This was difficult for two reasons:
+1. Since we were not using rubber O-rings but instead a variety of differently sized rubber bands wrapped around the roller, the roller did not have a uniform circumference. Thus, even though we fine-tuned the card gap in CAD to only let one card out at a time, this would sometimes result in jamming. To solve this, we widened the gap, but this would sometimes allow for multiple cards to slip out.
 2. Without a mechanism to maintain consistent downward pressure on the deck as cards were removed, the friction roller would sometimes grab multiple cards or slip entirely. Using a weight or a spring-loaded pressure plate above the deck could potentially resolve this.
 
 **Motor torque:** We originally planned for the shuffler motors to have high torque and low RPM, and the dealer motor to have low torque and high RPM. In hindsight, it should have been the other way around. Because of the low torque, it was nearly impossible for our dealer motor to deal out one card at a time without turning up the speed. This would result in the dealer sometimes spitting out 1-2 more cards than it should have for each deal cycle. The shuffler motors, on the other hand, could have spun faster even though their RPM was already maxed. Precision is less necessary since the shuffler should introduce a degree of randomness anyway.

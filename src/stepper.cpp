@@ -1,14 +1,16 @@
+// NOT USED
+
 #include "stepper.h"
 
 void stepperSetup() {
     pinMode(DIR_PIN, OUTPUT);
     pinMode(STEP_PIN, OUTPUT);
     pinMode(POWER_PIN, OUTPUT);
-    digitalWrite(POWER_PIN, LOW); // Start in cool/sleep mode
+    digitalWrite(POWER_PIN, LOW);
 }
 
 void move45Degrees() {
-    digitalWrite(POWER_PIN, HIGH); // Wake up driver
+    digitalWrite(POWER_PIN, HIGH);
     delay(10); 
 
     digitalWrite(DIR_PIN, HIGH);
@@ -16,10 +18,10 @@ void move45Degrees() {
     // 45 degrees / 1.8 per step = 25 steps
     for (int i = 0; i < 25; i++) {
         digitalWrite(STEP_PIN, HIGH);
-        delayMicroseconds(3000); // Slow & High Torque
+        delayMicroseconds(3000);
         digitalWrite(STEP_PIN, LOW);
         delayMicroseconds(3000);
     }
 
-    digitalWrite(POWER_PIN, LOW); // Disable coils to stay cool
+    digitalWrite(POWER_PIN, LOW);
 }

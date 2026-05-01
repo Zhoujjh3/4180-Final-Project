@@ -48,7 +48,7 @@ void transitionScreen(boolean upTriggered, boolean downTriggered, boolean select
                 currScreen = SCREEN_MENU;   
             }
             break;
-        case SCREEN_MANUAL_DEALING:          // ← new
+        case SCREEN_MANUAL_DEALING:
             if (selectTriggered) {
                 currScreen = SCREEN_MENU;
             }
@@ -118,7 +118,7 @@ void saveToNV() {
 
 void loadFromNV() {                                           
       prefs.begin("dealer", true);
-      numCards   = prefs.getUInt("numCards", 1);               
+      numCards = prefs.getUInt("numCards", 1);               
       numPlayers = prefs.getUInt("numPlayers", 2);             
       prefs.end();                                           
   }      

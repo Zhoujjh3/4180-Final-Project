@@ -13,7 +13,7 @@
 #define OUTPUT_MOTOR_AIN2    18
 #define PWM_O                21
 
-#define STATUS_LED_PIN       23  // plain LED + 330Ω to GND
+#define STATUS_LED_PIN       23 
 
 #define PWM_FREQ  1000
 #define PWM_RES   8

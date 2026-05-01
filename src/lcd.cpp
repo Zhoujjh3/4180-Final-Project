@@ -8,7 +8,7 @@ Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RS
 #define MENU_TEXT_X   22
 // y positions for each menu item
 // MENU_SHUFFLE=0, MENU_DEAL=1, MENU_PLAYERS=2, MENU_CARDS=3, SCREEN_MANUAL_DEALING=4
-static const int MENU_Y[] = { 35, 53, 71, 89, 107 };  // ← added 107 for MENU_MANUAL_SHUFFLE
+static const int MENU_Y[] = { 35, 53, 71, 89, 107 };
 
 // internal states
 static screenStates _lastScreen = (screenStates)-1;  // force fresh draw on first call
@@ -70,7 +70,6 @@ void drawScreen(screenStates s) {
                 _prevArrowMenu = -1;
                 drawMenu();
             }
-            // Arrow is already handled by drawArrow() in transitionMenu
             break;
         case SCREEN_SET_PLAYERS:
             drawNumberScreen("PLAYERS", numPlayers, fresh);
@@ -121,31 +120,30 @@ static void drawMenu() {
 }
 
 // Shows a label at the top and a large centered number
-// fresh=true does a full redraw; fresh=false only updates the number
 static void drawNumberScreen(const char* label, unsigned int value, bool fresh) {
     if (fresh) {
         tft.fillScreen(ST77XX_BLACK);
 
-        // Label
+        // label
         tft.setCursor(10, 10);
         tft.setTextColor(ST77XX_WHITE);
         tft.setTextSize(2);
         tft.println(label);
 
-        // Hint at bottom
+        // bottom text
         tft.setTextSize(1);
         tft.setTextColor(ST77XX_WHITE);
         tft.setCursor(10, tft.height() - 10);
         tft.println("UP/DOWN adjust  SEL back");
     }
 
-    // Clear only the number region and redraw
+    // clear only the number region and redraw
     tft.fillRect(0, 40, tft.width(), 50, ST77XX_BLACK);
 
     char buf[4];
     snprintf(buf, sizeof(buf), "%u", value);
     int digits = strlen(buf);
-    int textW = digits * 24;  // textSize 4: each char is 6*4=24px wide
+    int textW = digits * 24;
     int x = (tft.width() - textW) / 2;
     tft.setCursor(x, 52);
     tft.setTextSize(4);

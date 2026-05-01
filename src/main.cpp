@@ -6,10 +6,10 @@
 #include "menu.h"
 
 #define SHUFFLE_DURATION_MS  24000
-#define DEAL_DISPENSE_MS     800    // how long to run motor per card
+#define DEAL_DISPENSE_MS     900    // how long to run motor per card
 #define DEAL_PAUSE_MS        5000   // pause between cards
 
-// ── Shuffle state ─────────────────────────────────────────────
+// shuffle state
 unsigned long shuffleStart = 0;
 
 // dealer state machine
@@ -34,7 +34,7 @@ void sendCommand(uint8_t cmd);
 
 //deal sequence helper functions
 void startDealSequence() {
-    totalCards = (int)numPlayers * (int)numCards;
+    totalCards = (int)numPlayers;
     cardsDealt = 0;
     dealState  = DEAL_DISPENSING;
     dealTimer  = millis();
@@ -60,7 +60,7 @@ void runDealSequence() {
             Serial.printf("Card %d / %d dispensed\n", cardsDealt, totalCards);
 
             if (cardsDealt >= totalCards) {
-                // All cards dealt — return to menu
+                // all cards dealt and return to menu
                 dealState  = DEAL_IDLE;
                 currScreen = SCREEN_MENU;
                 drawScreen(SCREEN_MENU);
@@ -78,9 +78,8 @@ void runDealSequence() {
     }
 }
 
-//============================================//
-// BLE: Send Command                          //
-//============================================//
+
+// BLE send command
 void sendCommand(uint8_t cmd) {
     if (!isConnected || pChr == nullptr) {
         Serial.println("BLE not connected — command dropped");
@@ -91,9 +90,7 @@ void sendCommand(uint8_t cmd) {
     Serial.printf("BLE TX: cmd=0x%02X\n", cmd);
 }
 
-//============================================//
-// BLE Scan Callbacks                         //
-//============================================//
+// BLE scan callbacks
 class ScanCallbacks : public NimBLEScanCallbacks {
     void onResult(const NimBLEAdvertisedDevice* d) override {
         if (d->isAdvertisingService(NimBLEUUID(SERVICE_UUID))) {
@@ -109,9 +106,7 @@ class ScanCallbacks : public NimBLEScanCallbacks {
     }
 } scanCallbacks;
 
-//============================================//
-// BLE Client Callbacks                       //
-//============================================//
+// BLE client callbacks
 class ClientCallbacks : public NimBLEClientCallbacks {
     void onConnect(NimBLEClient* pClient) override {
         isConnected = true;
@@ -135,9 +130,7 @@ class ClientCallbacks : public NimBLEClientCallbacks {
     }
 } clientCallbacks;
 
-//============================================//
-// Connect to Motor Server                    //
-//============================================//
+// connect to motor server
 bool connectToServer() {
     NimBLEClient* pClient = NimBLEDevice::getClientByPeerAddress(advDevice->getAddress());
     if (pClient) NimBLEDevice::deleteClient(pClient);
@@ -165,9 +158,7 @@ bool connectToServer() {
     return true;
 }
 
-//============================================//
-// Setup                                      //
-//============================================//
+// setup
 void setup() {
     Serial.begin(115200);
     lcdSetup();
@@ -210,37 +201,37 @@ void loop() {
         selectTriggered = false;
 
         if (currScreen != prevScreen) {
-            // Entered shuffling
+            // entered shuffling
             if (currScreen == SCREEN_SHUFFLING) {
                 shuffleStart = millis();
                 sendCommand(CMD_SHUFFLE);
 
-            // Left shuffling manually (select press) — no auto-deal
+            // left shuffling manually
             } else if (prevScreen == SCREEN_SHUFFLING) {
                 sendCommand(CMD_SHUFFLE_STOP);
             }
             
-            // Entered manual shuffling — motors on, no timer
-            if (currScreen == SCREEN_MANUAL_DEALING) {        // ← new
+            // motors on, no timer
+            if (currScreen == SCREEN_MANUAL_DEALING) {
                 sendCommand(CMD_DEAL);
 
-            // Left manual shuffling (select press) — just stop motors
-            } else if (prevScreen == SCREEN_MANUAL_DEALING) { // ← new
+            // stop motors
+            } else if (prevScreen == SCREEN_MANUAL_DEALING) {
                 sendCommand(CMD_DEAL_STOP);
             }
 
-            // Entered dealing — start sequence
+            // entered dealing start sequence
             if (currScreen == SCREEN_DEALING) {
                 startDealSequence();
 
-            // Left dealing manually — stop sequence
+            // stop sequence
             } else if (prevScreen == SCREEN_DEALING) {
                 stopDealSequence();
             }
         }
     }
 
-    // Auto-stop shuffle and auto-start deal 
+    // auto-stop shuffle and auto-start deal 
     if (currScreen == SCREEN_SHUFFLING && (millis() - shuffleStart >= SHUFFLE_DURATION_MS)) {
         sendCommand(CMD_SHUFFLE_STOP);
         Serial.println("Shuffle done — starting deal sequence");

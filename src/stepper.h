@@ -1,3 +1,5 @@
+// NOT USED
+
 #ifndef STEPPER_H
 #define STEPPER_H
 
@@ -5,7 +7,7 @@
 
 #define DIR_PIN    12
 #define STEP_PIN   13
-#define POWER_PIN  20 // SLEEP + RESET bridged
+#define POWER_PIN  20
 
 void stepperSetup();
 void move45Degrees();
